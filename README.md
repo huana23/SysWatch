@@ -29,20 +29,36 @@ SysWatch là một ứng dụng web được xây dựng để quản lý và gi
 
 ---
 
-## 🚀 Công nghệ sử dụng
+## 🏗️ Kiến trúc & Công nghệ
 
-- Frontend: Next.js (App Router), React, TypeScript  
-- UI Components: shadcn/ui, Radix UI  
-- Styling: Tailwind CSS, SCSS  
-- Icons: Lucide Icons  
-- State Management: React Context / Hooks (tùy project) 
+### Frontend
+- Next.js 13 (App Router) + React + TypeScript
+- Tailwind CSS, SCSS, shadcn/ui, Radix UI
+- Lucide Icons
+- React Context / Hooks cho state management
+
+### Backend
+- Next.js API routes + Socket.IO (Realtime)
+- PostgreSQL + Prisma ORM
+- JWT + Bcrypt (auth + RBAC)
+- Redis + BullMQ (tùy chọn cho alerts & jobs)
 
 ---
 
 ## 📁 Cấu trúc dự án
 ```
 SysWatch/
-frontend/
+├── backend/              # Backend Next.js
+│   ├── src/app/api/
+│   │   ├── auth/         # Login / Register / RBAC
+│   │   ├── metrics/      # Metrics CRUD
+│   │   ├── alerts/       # Alerts / notifications
+│   │   └── users/        # User management
+│   ├── src/lib/          # DB, auth utils, socket
+│   ├── package.json
+│   └── tsconfig.json
+|
+├── frontend/
 ├── app/                # Next.js App Router pages
 │   ├── dashboard/      # Dashboard pages
 │   ├── settings/       # Settings pages
@@ -55,6 +71,9 @@ frontend/
 ├── package.json        # Dependencies & scripts
 ├── tsconfig.json       # TypeScript config
 └── README.md           # Project documentation
+│ 
+├── README.md
+└── .gitignore
 ```
 
 
@@ -62,9 +81,11 @@ frontend/
 
 ## 🛠️ Yêu cầu hệ thống
 
-- Node.js >= 16  
-- npm >= 8 hoặc yarn  
-- Trình duyệt hiện đại (Chrome, Edge, Firefox) 
+- Node.js >= 18
+- npm >= 8 hoặc yarn
+- PostgreSQL >= 14
+- Redis (tùy chọn nếu dùng BullMQ)
+- Trình duyệt hiện đại (Chrome, Edge, Firefox)
 
 
 ---
@@ -105,6 +126,21 @@ yarn dev
 ---
 
 
+### 3. Thiết lập environment variables
+
+Tạo file .env cho backend:
+```bash
+DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/syswatch"
+JWT_SECRET="your_jwt_secret"
+REDIS_URL="redis://localhost:6379"   # nếu dùng BullMQ
+```
+
+
+Tạo file .env.local cho frontend (nếu cần):
+```bash
+NEXT_PUBLIC_API_URL="http://localhost:3000/api"
+``` 
+
 ### 💻 Scripts chính
 
 | **Script**         | **Mô tả**                              |
@@ -115,8 +151,8 @@ yarn dev
 | `npm run lint`     | Kiểm tra code style                    |
 | `npm run format`   | Format code (nếu setup Prettier)       |
 
-
-👉 Frontend chạy tại: http://localhost:3000
+👉 Backend chạy tại : http://localhost:3000
+👉 Frontend chạy tại: http://localhost:3001
 
 ---
 
@@ -130,17 +166,31 @@ Dự án có thể deploy trên:
 
 
 ---
-
+    
 
 ### 🧱 Các route chính (App Router)
-| **Route**           | **Mô tả**                              |
-| -----------------   | -------------------------------------  |
-| `/`                 | DashBoard Hệ Thống Giám Sát            |
-| `/health`           | Sức Khỏe Hệ Thống                      |
-| `/partners`         | Đối Tác                                |
-| `/customer-service` | Chăm Sóc Khách Hàng                    |
-| `/marketing`        | Tiếp Thị                               |
-| `/access-control`   | Kiểm Soát Truy Cập                     |
+👉 Backend API
+
+| Route                | Method   | Mô tả                  |
+| -------------------- | -------- | ---------------------- |
+| `/api/auth/login`    | POST     | Login + JWT            |
+| `/api/auth/register` | POST     | Register user          |
+| `/api/users`         | GET/POST | User management        |
+| `/api/metrics`       | GET/POST | Metrics CRUD           |
+| `/api/alerts`        | GET/POST | Alerts / notifications |
+
+
+
+👉 Frontend routes
+| Route               | Mô tả                     |
+| ------------------- | ------------------------- |
+| `/`                 | Dashboard hệ thống        |
+| `/health`           | System Health             |
+| `/partners`         | Quản lý đối tác           |
+| `/customer-service` | Chăm sóc khách hàng       |
+| `/marketing`        | Marketing analytics       |
+| `/access-control`   | Kiểm soát truy cập (RBAC) |
+
 
 
 👉  Các route khác có thể được thêm theo nhu cầu dự án.
