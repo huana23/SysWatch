@@ -48,6 +48,14 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-ac-reject: var(--ac-reject);
+  --color-ac-reject-foreground: var(--ac-reject-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-error: var(--error);
+  --color-error-foreground: var(--error-foreground);
 }
 
 /* Default theme styles (used when no data-theme-preset is set or when 'default' is selected).
@@ -59,12 +67,12 @@ These serve as the fallback; there is no separate default.css file. */
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.148 0.004 228.8);
   --primary: oklch(0.488 0.243 264.376);
-  --primary-foreground: oklch(0.97 0.014 254.604);
+  --primary-foreground: oklch(0.638 0.1639 248.38);
   --secondary: oklch(0.967 0.001 286.375);
   --secondary-foreground: oklch(0.21 0.006 285.885);
-  --muted: oklch(0.963 0.002 197.1);
+  --muted: oklch(0.9842 0.0034 247.86);
   --muted-foreground: oklch(0.56 0.021 213.5);
-  --accent: oklch(0.963 0.002 197.1);
+  --accent: oklch(0.9842 0.0034 247.86);
   --accent-foreground: oklch(0.218 0.008 223.9);
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.925 0.005 214.3);
@@ -76,19 +84,49 @@ These serve as the fallback; there is no separate default.css file. */
   --chart-4: oklch(0.488 0.243 264.376);
   --chart-5: oklch(0.424 0.199 265.638);
   --sidebar: oklch(0.987 0.002 197.1);
-  --sidebar-foreground: oklch(0.148 0.004 228.8);
+  --sidebar-foreground: oklch(0.4455 0.0374 257.28);
   --sidebar-primary: oklch(0.546 0.245 262.881);
   --sidebar-primary-foreground: oklch(0.97 0.014 254.604);
-  --sidebar-accent: oklch(0.963 0.002 197.1);
-  --sidebar-accent-foreground: oklch(0.218 0.008 223.9);
-  --sidebar-border: oklch(0.925 0.005 214.3);
+  --sidebar-accent: oklch(0.638 0.1639 248.38 / 10.2%);
+  --sidebar-accent-foreground: oklch(0.638 0.1639 248.38);
+  --sidebar-border: oklch(0.9288 0.0126 255.51);
   --sidebar-ring: oklch(0.723 0.014 214.4);
+
+  /* Access control surfaces */
+  --ac-info: oklch(0.638 0.1639 248.38);
+  --ac-info-bg: oklch(0.638 0.1639 248.38 / 5%);
+  --ac-info-border: oklch(0.638 0.1639 248.38 / 20%);
+
+  --ac-reject: oklch(0.9288 0.0126 255.51);
+  --ac-reject-foreground: oklch(0.2077 0.0398 265.75);
+  --heading-lg: oklch(0.2077 0.0398 265.75);
+  --heading-md: oklch(0.5544 0.0407 257.42);
+
+  --success: oklch(0.9505 0.0507 163.05);
+  --success-foreground: oklch(0.5081 0.1049 165.61);
+  --warning: oklch(0.9619 0.058 95.62);
+  --warning-foreground: oklch(0.5553 0.1455 49);
+  --error: oklch(0.9356 0.0309 17.72);
+  --error-foreground: oklch(0.5054 0.1905 27.52);
 
   /* fonts */
   --font-sans: var(--font-inter);
   --font-mono: var(--font-geist-mono);
   --background: oklch(1 0 0);
-  --foreground: oklch(0.148 0.004 228.8);
+  --foreground: oklch(0.4455 0.0374 257.28);
+}
+
+.text-heading-lg {
+  color: var(--heading-lg);
+}
+
+.text-heading-md {
+  color: var(--heading-md);
+}
+
+.ac-info-surface {
+  background-color: var(--ac-info-bg);
+  border-color: var(--ac-info-border);
 }
 
 .dark {

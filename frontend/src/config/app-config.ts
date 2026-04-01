@@ -5,6 +5,9 @@ const currentYear = new Date().getFullYear();
 export const APP_CONFIG = {
   name: "SysWatch",
   version: packageJson.version,
+  logoSrc: "/images/logo.svg",
+  brandTitle: "Hệ Thống Giám Sát",
+  brandSubtitle: "Bảng Điều Khiển Quản Trị",
   copyright: `© ${currentYear}, Studio Admin.`,
   meta: {
     title: "SysWatch - Modern Next.js Dashboard Starter Template",
