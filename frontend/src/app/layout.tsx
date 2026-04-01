@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
-
 import type { Metadata } from "next";
 
+import AppShell from "@/components/layout/app-shell";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { APP_CONFIG } from "@/config/app-config";
@@ -17,7 +17,9 @@ export const metadata: Metadata = {
   description: APP_CONFIG.meta.description,
 };
 
-export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+export default function RootLayout({
+  children,
+}: Readonly<{ children: ReactNode }>) {
   const {
     theme_mode,
     theme_preset,
@@ -25,10 +27,13 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
     navbar_style,
     sidebar_variant,
     sidebar_collapsible,
-    font } = PREFERENCE_DEFAULTS;
+    font,
+  } = PREFERENCE_DEFAULTS;
+
   return (
     <html
-      lang="en"
+      lang="vi"
+      className="h-dvh overflow-hidden"
       data-theme-mode={theme_mode}
       data-theme-preset={theme_preset}
       data-content-layout={content_layout}
@@ -39,10 +44,21 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
       suppressHydrationWarning
     >
       <head>
-        {/* Applies theme and layout preferences on load to avoid flicker and unnecessary server rerenders. */}
         <ThemeBootScript />
+
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+        />
       </head>
-      <body className={`${fontVars} min-h-screen antialiased`}>
+
+      <body className={`${fontVars} h-dvh overflow-hidden antialiased`}>
         <TooltipProvider>
           <PreferencesStoreProvider
             themeMode={theme_mode}
@@ -51,7 +67,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
             navbarStyle={navbar_style}
             font={font}
           >
-            {children}
+            <AppShell>{children}</AppShell>
             <Toaster />
           </PreferencesStoreProvider>
         </TooltipProvider>
