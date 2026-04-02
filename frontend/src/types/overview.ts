@@ -1,9 +1,7 @@
-export type ChangeType = "up" | "down" | "neutral";
 
 export type DashboardStatMetric = {
   value: string;
   change: string;
-  changeType: ChangeType;
 };
 
 export type DashboardAlertType = "danger" | "warning" | "info";

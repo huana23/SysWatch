@@ -2,29 +2,26 @@ import type {
   DashboardActivityItem,
   DashboardAlertItem,
   DashboardModuleMetrics,
-  DashboardOverviewStats,
 } from "@/types/overview";
+
+import type { DashboardOverviewStats } from "@/types/overview";
 
 export const dashboardOverviewStats: DashboardOverviewStats = {
   users: {
     value: "1,245,890",
     change: "+12%",
-    changeType: "up",
   },
   orders: {
     value: "45,120",
     change: "+8%",
-    changeType: "up",
   },
   partners: {
     value: "1,542",
     change: "0%",
-    changeType: "neutral",
   },
   revenue: {
     value: "$125,430",
     change: "+5%",
-    changeType: "up",
   },
 };
 

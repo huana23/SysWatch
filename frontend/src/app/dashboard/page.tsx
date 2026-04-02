@@ -29,10 +29,16 @@ import StatCardItem from "@/components/overview/stat-card-item";
 import AlertCardItem from "@/components/overview/alert-card-item";
 import ActivityTimelineItem from "@/components/overview/activity-timeline-item";
 import ModuleCardItem from "@/components/overview/module-card-item";
+import { getChangeMeta } from "@/lib/change-trend";
 
 const visibleActivities = dashboardActivities.slice(0, 4);
 
 export default function DashboardPage() {
+  const usersChange = getChangeMeta(dashboardOverviewStats.users.change);
+  const ordersChange = getChangeMeta(dashboardOverviewStats.orders.change);
+  const partnersChange = getChangeMeta(dashboardOverviewStats.partners.change);
+  const revenueChange = getChangeMeta(dashboardOverviewStats.revenue.change);
+
   return (
     <div className="flex w-full flex-col gap-6">
       <div className="rounded-2xl border border-border bg-card shadow-sm">
@@ -43,36 +49,36 @@ export default function DashboardPage() {
         <StatCardItem
           title="Tổng số người dùng"
           value={dashboardOverviewStats.users.value}
-          change={dashboardOverviewStats.users.change}
-          changeType={dashboardOverviewStats.users.changeType}
-          icon={<Users className="h-4 w-4" />}
+          change={usersChange.displayChange}
+          changeType={usersChange.changeType}
+          icon={<Users className="h-6 w-6" />}
           iconWrapClass="bg-blue-500/10 text-blue-500"
         />
 
         <StatCardItem
           title="Tổng số đơn đặt hàng"
           value={dashboardOverviewStats.orders.value}
-          change={dashboardOverviewStats.orders.change}
-          changeType={dashboardOverviewStats.orders.changeType}
-          icon={<ShoppingCart className="h-4 w-4" />}
+          change={ordersChange.displayChange}
+          changeType={ordersChange.changeType}
+          icon={<ShoppingCart className="h-6 w-6" />}
           iconWrapClass="bg-violet-500/10 text-violet-500"
         />
 
         <StatCardItem
           title="Tổng số đối tác"
           value={dashboardOverviewStats.partners.value}
-          change={dashboardOverviewStats.partners.change}
-          changeType={dashboardOverviewStats.partners.changeType}
-          icon={<Handshake className="h-4 w-4" />}
+          change={partnersChange.displayChange}
+          changeType={partnersChange.changeType}
+          icon={<Handshake className="h-6 w-6" />}
           iconWrapClass="bg-amber-500/10 text-amber-500"
         />
 
         <StatCardItem
           title="Doanh thu hôm nay"
           value={dashboardOverviewStats.revenue.value}
-          change={dashboardOverviewStats.revenue.change}
-          changeType={dashboardOverviewStats.revenue.changeType}
-          icon={<Wallet className="h-4 w-4" />}
+          change={revenueChange.displayChange}
+          changeType={revenueChange.changeType}
+          icon={<Wallet className="h-6 w-6" />}
           iconWrapClass="bg-emerald-500/10 text-emerald-500"
         />
       </div>

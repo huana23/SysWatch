@@ -1,6 +1,7 @@
 "use client";
 
 import { FiCpu, FiDatabase, FiHardDrive } from "react-icons/fi";
+import { TriangleAlert } from "lucide-react";
 
 import BandwidthChart from "@/components/health/bandwidth-chart";
 import CpuUsageChart from "@/components/health/cpu-usage-chart";
@@ -8,6 +9,7 @@ import RamUsageChart from "@/components/health/ram-usage-chart";
 import StatLegendItem from "@/components/health/stat-legend-item";
 import StatusCard from "@/components/health/status-card";
 import { bandwidthData, cpuData, ramData } from "@/data/health";
+import { getChangeType } from "@/lib/change-trend";
 
 export default function SystemHealthPage() {
   const currentCpu = cpuData.length ? cpuData[cpuData.length - 1].current : 0;
@@ -21,6 +23,9 @@ export default function SystemHealthPage() {
   const peakCpu = cpuData.length
     ? Math.max(...cpuData.map((item) => item.current))
     : 0;
+
+  const cpuStatusChange = "+0.5%";
+  const ramStatusChange = "-12%";
 
   return (
     <div className="flex w-full flex-col gap-6">
@@ -38,8 +43,8 @@ export default function SystemHealthPage() {
           variant="success"
           label="CPU Status"
           title="Bình thường"
-          noteIcon="↗"
-          note="+0.5% so với giờ trước"
+          note={`${cpuStatusChange} so với giờ trước`}
+          noteChangeType={getChangeType(cpuStatusChange)}
           icon={<FiCpu className="h-[27px] w-[27px]" />}
         />
 
@@ -47,8 +52,8 @@ export default function SystemHealthPage() {
           variant="warning"
           label="RAM Status"
           title="Cảnh báo"
-          noteIcon="↓"
-          note="-12% bộ nhớ trống"
+          note={`${ramStatusChange} bộ nhớ trống`}
+          noteChangeType={getChangeType(ramStatusChange)}
           icon={<FiHardDrive className="h-[27px] w-[27px]" />}
         />
 
@@ -56,8 +61,8 @@ export default function SystemHealthPage() {
           variant="danger"
           label="Database Connection"
           title="Nguy cấp"
-          noteIcon="⚠"
           note="Độ trễ tăng 400ms"
+          noteIcon={<TriangleAlert className="h-3.5 w-3.5" />}
           icon={<FiDatabase className="h-[27px] w-[27px]" />}
         />
       </div>

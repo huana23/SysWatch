@@ -1,9 +1,4 @@
-import type { DashboardActivityItem } from "@/types/overview";
-
-type ActivityTimelineItemProps = {
-  item: DashboardActivityItem;
-  isLast: boolean;
-};
+import type {ActivityTimelineItemProps} from "@/types/overview";
 
 export default function ActivityTimelineItem({
   item,

@@ -1,6 +1,9 @@
 import type { ReactNode } from "react";
 
+import { Minus, TriangleAlert, TrendingDown, TrendingUp } from "lucide-react";
+
 import { Card, CardContent } from "@/components/ui/card";
+import type { ChangeType } from "@/lib/change-trend";
 
 type StatusVariant = "success" | "warning" | "danger";
 
@@ -8,9 +11,10 @@ type StatusCardProps = {
   variant?: StatusVariant;
   label: string;
   title: string;
-  noteIcon: string;
   note: string;
   icon: ReactNode;
+  noteChangeType?: ChangeType;
+  noteIcon?: ReactNode;
 };
 
 const variantMap: Record<
@@ -42,11 +46,27 @@ export default function StatusCard({
   variant = "success",
   label,
   title,
-  noteIcon,
   note,
   icon,
+  noteChangeType,
+  noteIcon,
 }: StatusCardProps) {
   const styles = variantMap[variant];
+
+  const TrendIcon =
+    noteChangeType === "positive"
+      ? TrendingUp
+      : noteChangeType === "negative"
+        ? TrendingDown
+        : noteChangeType === "neutral"
+          ? Minus
+          : null;
+
+  const renderedNoteIcon = TrendIcon ? (
+    <TrendIcon className="h-3.5 w-3.5" />
+  ) : noteIcon ? (
+    noteIcon
+  ) : null;
 
   return (
     <Card
@@ -63,9 +83,11 @@ export default function StatusCard({
           </h3>
 
           <p className="flex items-center gap-1 text-xs font-normal leading-4 text-slate-400">
-            <span className="inline-flex w-[14px] shrink-0 justify-center">
-              {noteIcon}
-            </span>
+            {renderedNoteIcon ? (
+              <span className="inline-flex w-[14px] shrink-0 justify-center">
+                {renderedNoteIcon}
+              </span>
+            ) : null}
             <span>{note}</span>
           </p>
         </div>
