@@ -10,6 +10,7 @@ import {
 } from "recharts";
 
 import ChartTooltip from "@/components/health/chart-tooltip";
+import {RamPoint} from "@/types/monitoring";
 
 type RamDataPoint = {
   time: string;
@@ -17,7 +18,7 @@ type RamDataPoint = {
 };
 
 type RamUsageChartProps = {
-  data: RamDataPoint[];
+  data: RamPoint[];
 };
 
 export default function RamUsageChart({ data }: RamUsageChartProps) {

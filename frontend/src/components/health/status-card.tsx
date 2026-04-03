@@ -54,13 +54,15 @@ export default function StatusCard({
   const styles = variantMap[variant];
 
   const TrendIcon =
-    noteChangeType === "positive"
-      ? TrendingUp
-      : noteChangeType === "negative"
-        ? TrendingDown
-        : noteChangeType === "neutral"
-          ? Minus
-          : null;
+    variant === "danger"
+      ? TriangleAlert
+      : noteChangeType === "positive"
+        ? TrendingUp
+        : noteChangeType === "negative"
+          ? TrendingDown
+          : noteChangeType === "neutral"
+            ? Minus
+            : null;
 
   const renderedNoteIcon = TrendIcon ? (
     <TrendIcon className="h-3.5 w-3.5" />
@@ -70,11 +72,11 @@ export default function StatusCard({
 
   return (
     <Card
-      className={`relative min-h-32 overflow-hidden border-0 shadow-sm before:absolute before:inset-y-0 before:left-0 before:w-1 ${styles.bar}`}
+      className={`relative min-h-32 w-full overflow-hidden border-0 shadow-sm before:absolute before:inset-y-0 before:left-0 before:w-1 ${styles.bar}`}
     >
-      <CardContent className="flex min-h-32 items-center justify-between p-6">
+      <CardContent className="flex min-h-25 items-center justify-between px-6">
         <div className="min-w-0">
-          <span className="mb-1 block text-sm font-medium leading-5 text-slate-500">
+          <span className="mb-1 block text-1.5xl font-medium leading-5 text-slate-500">
             {label}
           </span>
 
@@ -93,7 +95,7 @@ export default function StatusCard({
         </div>
 
         <div
-          className={`flex h-[27px] w-[27px] shrink-0 items-center justify-center ${styles.icon}`}
+          className={`flex shrink-0 items-center justify-center ${styles.icon}`}
         >
           {icon}
         </div>

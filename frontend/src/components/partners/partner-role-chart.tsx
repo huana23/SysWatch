@@ -19,7 +19,7 @@ export default function PartnerRoleChart({
   data,
 }: PartnerRoleChartProps) {
   return (
-    <Card className="min-w-0 rounded-2xl border border-border bg-card shadow-sm">
+    <Card className="min-w-0 h-full rounded-2xl border border-border bg-card shadow-sm">
       <CardHeader className="border-b px-5 py-4">
         <CardTitle className="text-xl font-bold">{title}</CardTitle>
       </CardHeader>

@@ -1,48 +1,69 @@
+"use client";
+
 import {
   AlertCircle,
   CircleCheckBig,
+  Clock3,
   Mail,
   MessageCircle,
   Phone,
-  CircleEllipsis ,
   Ticket,
-  Clock3,
-  TriangleAlert
+  TriangleAlert,
+  CircleEllipsis,
 } from "lucide-react";
 
+import Stats from "@/components/common/stats";
 import SupportChannelsCard from "@/components/support/support-channels-card";
 import SupportHourChart from "@/components/support/support-hour-chart";
 import SupportRecentTicketsTable from "@/components/support/support-recent-tickets-table";
 import SupportSlaCard from "@/components/support/support-sla-card";
-import {
-  supportChannels,
-  supportHourlyData,
-  supportRecentTickets,
-  supportSlaSummary,
-  supportSummary,
-} from "@/data/support";
+import { useSupportRealtime } from "@/hooks/use-support-realtime";
 import { getChangeType } from "@/lib/change-trend";
-import Stats from "@/components/common/stats";
 
+function SupportStatSkeleton() {
+  return (
+    <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+      <div className="mb-5 flex items-start justify-between">
+        <div className="h-4 w-28 animate-pulse rounded bg-muted" />
+        <div className="h-9 w-9 animate-pulse rounded-xl bg-muted" />
+      </div>
 
+      <div className="flex items-end gap-2">
+        <div className="h-9 w-24 animate-pulse rounded bg-muted" />
+        <div className="h-4 w-16 animate-pulse rounded bg-muted" />
+      </div>
+    </div>
+  );
+}
+
+function SupportPanelSkeleton({ height = "h-[320px]" }: { height?: string }) {
+  return (
+    <div
+      className={`rounded-2xl border border-border bg-card shadow-sm animate-pulse ${height}`}
+    />
+  );
+}
 
 export default function SupportPage() {
-  const SupportStatItems = [
+  const { isReady, summary, channels, hourlyData, recentTickets, slaSummary } =
+    useSupportRealtime();
+
+  const supportStatItems = [
     {
       title: "Tổng ticket",
-      value: supportSummary.totalTickets,
-      change: supportSummary.totalTicketsChange,
-      changeType: getChangeType(supportSummary.totalTicketsChange),
-      changeSuffix: "so với tháng trước",
+      value: summary.totalTickets,
+      change: summary.totalTicketsChange,
+      changeType: getChangeType(summary.totalTicketsChange),
+      changeSuffix: "so với chu kỳ trước",
       icon: Ticket,
       iconWrapClass: "bg-blue-500/10 text-blue-500",
       changeClassName: "text-emerald-500",
     },
     {
       title: "Đã giải quyết",
-      value: supportSummary.resolvedTickets,
-      change: supportSummary.resolvedTicketsChange,
-      changeType: getChangeType(supportSummary.resolvedTicketsChange),
+      value: summary.resolvedTickets,
+      change: summary.resolvedTicketsChange,
+      changeType: getChangeType(summary.resolvedTicketsChange),
       changeSuffix: "tỉ lệ hoàn thành",
       icon: CircleCheckBig,
       iconWrapClass: "bg-emerald-500/10 text-emerald-500",
@@ -50,9 +71,9 @@ export default function SupportPage() {
     },
     {
       title: "Đang xử lý",
-      value: supportSummary.inProgressTickets,
-      change: supportSummary.inProgressTicketsChange,
-      changeType: getChangeType(supportSummary.inProgressTicketsChange),
+      value: summary.inProgressTickets,
+      change: summary.inProgressTicketsChange,
+      changeType: getChangeType(summary.inProgressTicketsChange),
       changeSuffix: "thời gian chờ TB",
       icon: CircleEllipsis,
       iconWrapClass: "bg-amber-500/10 text-amber-500",
@@ -61,9 +82,9 @@ export default function SupportPage() {
     },
     {
       title: "Quá hạn (SLA)",
-      value: supportSummary.overdueSlaTickets,
-      change: supportSummary.overdueSlaTicketsChange,
-      changeType: getChangeType(supportSummary.overdueSlaTicketsChange),
+      value: summary.overdueSlaTickets,
+      change: summary.overdueSlaTicketsChange,
+      changeType: getChangeType(summary.overdueSlaTicketsChange),
       changeIcon: TriangleAlert,
       changeSuffix: "cần xử lý gấp",
       icon: AlertCircle,
@@ -71,7 +92,8 @@ export default function SupportPage() {
       changeClassName: "text-rose-500",
     },
   ] as const;
-  const channelItems = supportChannels.map((item) => {
+
+  const channelItems = channels.map((item) => {
     if (item.key === "email") {
       return {
         label: "Email",
@@ -104,7 +126,7 @@ export default function SupportPage() {
     };
   });
 
-  const recentTicketRows = supportRecentTickets.map((item) => {
+  const recentTicketRows = recentTickets.map((item) => {
     const channelMap = {
       email: {
         channelIcon: Mail,
@@ -139,7 +161,7 @@ export default function SupportPage() {
       item.status === "overdue"
         ? "text-rose-500"
         : item.status === "in_progress"
-          ? "text-rose-500"
+          ? "text-amber-500"
           : "text-muted-foreground";
 
     return {
@@ -158,39 +180,75 @@ export default function SupportPage() {
   const slaItems = [
     {
       label: "Thời gian phản hồi đầu",
-      valueLabel: `${supportSlaSummary.firstResponseRate}% Đạt`,
-      progress: supportSlaSummary.firstResponseRate,
+      valueLabel: `${slaSummary.firstResponseRate}% Đạt`,
+      progress: slaSummary.firstResponseRate,
       barClassName: "bg-blue-500",
       valueClassName: "text-blue-500",
     },
     {
       label: "Thời gian giải quyết",
-      valueLabel: `${supportSlaSummary.resolutionRate}% Đạt`,
-      progress: supportSlaSummary.resolutionRate,
+      valueLabel: `${slaSummary.resolutionRate}% Đạt`,
+      progress: slaSummary.resolutionRate,
       barClassName: "bg-emerald-500",
       valueClassName: "text-emerald-500",
     },
     {
       label: "Vi phạm nghiêm trọng",
-      valueLabel: `${supportSlaSummary.criticalBreachCount} Ticket`,
-      progress: supportSlaSummary.criticalBreachProgress,
+      valueLabel: `${slaSummary.criticalBreachCount} Ticket`,
+      progress: slaSummary.criticalBreachProgress,
       barClassName: "bg-rose-500",
       valueClassName: "text-rose-500",
     },
   ];
 
+  if (!isReady) {
+    return (
+      <div className="flex w-full flex-col gap-6">
+        <div className="w-full">
+          <h1 className="m-0 text-[24px] font-black leading-[30px] tracking-[-0.5px] text-foreground sm:text-[28px] sm:leading-[34px] lg:text-[30px] lg:leading-9">
+            Chăm Sóc Khách Hàng
+          </h1>
+          <p className="mt-1 text-sm font-normal leading-6 text-muted-foreground sm:text-[15px] lg:text-base">
+            Báo cáo hiệu suất chăm sóc khách hàng cụ thể
+          </p>
+        </div>
+
+        <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <SupportStatSkeleton />
+          <SupportStatSkeleton />
+          <SupportStatSkeleton />
+          <SupportStatSkeleton />
+        </div>
+
+        <section className="grid w-full grid-cols-1 items-stretch gap-6 xl:grid-cols-[1fr_2fr]">
+          <SupportPanelSkeleton height="h-[290px]" />
+          <SupportPanelSkeleton height="h-[290px]" />
+        </section>
+
+        <section className="grid w-full grid-cols-1 items-stretch gap-6 xl:grid-cols-[2fr_1fr]">
+          <SupportPanelSkeleton height="h-[360px]" />
+          <SupportPanelSkeleton height="h-[360px]" />
+        </section>
+      </div>
+    );
+  }
+
   return (
     <div className="flex w-full flex-col gap-6">
       <div className="w-full">
-        <h1 className="m-0 text-[24px] font-black leading-[30px] tracking-[-0.5px] text-foreground sm:text-[28px] sm:leading-[34px] lg:text-[30px] lg:leading-9">
-          Chăm Sóc Khách Hàng
-        </h1>
-        <p className="mt-1 text-sm font-normal leading-6 text-muted-foreground sm:text-[15px] lg:text-base">
-          Báo cáo hiệu suất chăm sóc khách hàng cụ thể
-        </p>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h1 className="m-0 text-[24px] font-black leading-[30px] tracking-[-0.5px] text-foreground sm:text-[28px] sm:leading-[34px] lg:text-[30px] lg:leading-9">
+              Chăm Sóc Khách Hàng
+            </h1>
+            <p className="mt-1 text-sm font-normal leading-6 text-muted-foreground sm:text-[15px] lg:text-base">
+              Báo cáo hiệu suất chăm sóc khách hàng cụ thể
+            </p>
+          </div>
+        </div>
       </div>
 
-      <Stats items={SupportStatItems} />
+      <Stats items={supportStatItems} />
 
       <section className="grid w-full grid-cols-1 items-stretch gap-6 xl:grid-cols-[1fr_2fr]">
         <div className="min-w-0">
@@ -207,7 +265,7 @@ export default function SupportPage() {
             subtitle="Thời gian cao điểm nhận yêu cầu hỗ trợ"
             todayLabel="Hôm nay"
             yesterdayLabel="Hôm qua"
-            data={supportHourlyData}
+            data={hourlyData}
           />
         </div>
       </section>

@@ -1,31 +1,82 @@
 "use client";
 
-import { FiCpu, FiDatabase, FiHardDrive } from "react-icons/fi";
 import { TriangleAlert } from "lucide-react";
+import { FiCpu, FiDatabase, FiHardDrive } from "react-icons/fi";
 
 import BandwidthChart from "@/components/health/bandwidth-chart";
 import CpuUsageChart from "@/components/health/cpu-usage-chart";
 import RamUsageChart from "@/components/health/ram-usage-chart";
 import StatLegendItem from "@/components/health/stat-legend-item";
 import StatusCard from "@/components/health/status-card";
-import { bandwidthData, cpuData, ramData } from "@/data/health";
+import { useSystemHealth } from "@/hooks/use-system-health";
 import { getChangeType } from "@/lib/change-trend";
 
+function HealthStatusSkeleton() {
+  return <div className="h-32 animate-pulse rounded-xl border border-border bg-card shadow-sm" />;
+}
+
+function HealthPanelSkeleton({ height = "h-[380px]" }: { height?: string }) {
+  return (
+    <div className={`animate-pulse rounded-xl border border-border bg-card shadow-sm ${height}`} />
+  );
+}
+
 export default function SystemHealthPage() {
-  const currentCpu = cpuData.length ? cpuData[cpuData.length - 1].current : 0;
+  const {
+    isReady,
+    cpuData,
+    ramData,
+    bandwidthData,
+    currentCpu,
+    averageCpu,
+    peakCpu,
+    cpuStatusChange,
+    ramStatusChange,
+    cpuStatusVariant,
+    cpuStatusTitle,
+    ramStatusVariant,
+    ramStatusTitle,
+    databaseStatusVariant,
+    databaseStatusTitle,
+    databaseNote,
+    ramUsedText,
+    ramFreeText,
+    swapText,
+    latencyText,
+    packetLossText,
+    inboundText,
+    outboundText,
+    memoryLeakSignal,
+    windowLabel,
+  } = useSystemHealth();
 
-  const averageCpu = cpuData.length
-    ? Math.round(
-        cpuData.reduce((sum, item) => sum + item.current, 0) / cpuData.length,
-      )
-    : 0;
+  if (!isReady) {
+    return (
+      <div className="flex w-full flex-col gap-6">
+        <div className="w-full">
+          <h1 className="m-0 text-[24px] font-black leading-[30px] tracking-[-0.5px] text-foreground sm:text-[28px] sm:leading-[34px] lg:text-[30px] lg:leading-9">
+            Sức khỏe Hệ thống
+          </h1>
+          <p className="mt-1 text-sm font-normal leading-6 text-muted-foreground sm:text-[15px] lg:text-base">
+            Theo dõi tài nguyên và hiệu suất máy chủ theo thời gian thực
+          </p>
+        </div>
 
-  const peakCpu = cpuData.length
-    ? Math.max(...cpuData.map((item) => item.current))
-    : 0;
+        <div className="grid w-full grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
+          <HealthStatusSkeleton />
+          <HealthStatusSkeleton />
+          <HealthStatusSkeleton />
+        </div>
 
-  const cpuStatusChange = "+0.5%";
-  const ramStatusChange = "-12%";
+        <div className="grid w-full grid-cols-1 items-stretch gap-6 xl:grid-cols-2">
+          <HealthPanelSkeleton />
+          <HealthPanelSkeleton />
+        </div>
+
+        <HealthPanelSkeleton height="h-[420px]" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex w-full flex-col gap-6">
@@ -40,30 +91,36 @@ export default function SystemHealthPage() {
 
       <div className="grid w-full grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
         <StatusCard
-          variant="success"
+          variant={cpuStatusVariant}
           label="CPU Status"
-          title="Bình thường"
-          note={`${cpuStatusChange} so với giờ trước`}
+          title={cpuStatusTitle}
+          note={`${cpuStatusChange} so với chu kỳ trước`}
           noteChangeType={getChangeType(cpuStatusChange)}
-          icon={<FiCpu className="h-[27px] w-[27px]" />}
+          icon={<FiCpu className="text-[36px]" />}
         />
 
         <StatusCard
-          variant="warning"
+          variant={ramStatusVariant}
           label="RAM Status"
-          title="Cảnh báo"
+          title={ramStatusTitle}
           note={`${ramStatusChange} bộ nhớ trống`}
           noteChangeType={getChangeType(ramStatusChange)}
-          icon={<FiHardDrive className="h-[27px] w-[27px]" />}
+          icon={<FiHardDrive className="text-[36px]" />}
         />
 
         <StatusCard
-          variant="danger"
+          variant={databaseStatusVariant}
           label="Database Connection"
-          title="Nguy cấp"
-          note="Độ trễ tăng 400ms"
-          noteIcon={<TriangleAlert className="h-3.5 w-3.5" />}
-          icon={<FiDatabase className="h-[27px] w-[27px]" />}
+          title={databaseStatusTitle}
+          note={databaseNote}
+          noteIcon={
+            databaseStatusVariant !== "success" ? (
+              <TriangleAlert className="h-3.5 w-3.5" />
+            ) : undefined
+          }
+          icon={
+              <FiDatabase className="text-[36px]" />
+          }
         />
       </div>
 
@@ -74,6 +131,9 @@ export default function SystemHealthPage() {
               <h3 className="m-0 text-lg font-bold leading-7 text-card-foreground">
                 Sử dụng CPU (%)
               </h3>
+              {/*<p className="mt-1 text-xs text-muted-foreground">*/}
+              {/*  Sliding window: {windowLabel}*/}
+              {/*</p>*/}
             </div>
 
             <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
@@ -95,18 +155,13 @@ export default function SystemHealthPage() {
                 />
               </div>
 
-              <select
-                defaultValue="1h"
-                className="h-8 w-full max-w-full shrink-0 rounded-md border border-slate-200 bg-slate-50 px-2 text-xs font-medium leading-4 text-slate-700 outline-none transition-colors focus:border-slate-200 focus:outline-none focus:ring-0 lg:w-[134px]"
-              >
-                <option value="1h">Gần nhất 1 giờ</option>
-                <option value="6h">Gần nhất 6 giờ</option>
-                <option value="24h">Gần nhất 24 giờ</option>
-              </select>
+              <div className="rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
+                Tự cập nhật mỗi 30 giây
+              </div>
             </div>
           </div>
 
-          <div className="mt-4">
+          <div className="mt-4 h-[320px] min-w-0">
             <CpuUsageChart data={cpuData} />
           </div>
         </section>
@@ -120,42 +175,48 @@ export default function SystemHealthPage() {
                 </h3>
               </div>
 
-              <div className="whitespace-nowrap rounded-full bg-yellow-100 px-2 py-[5px] text-[11px] font-bold leading-4 text-yellow-700">
-                ! CÓ DẤU HIỆU MEMORY LEAK
+              <div
+                className={`whitespace-nowrap rounded-full px-2 py-[5px] text-[11px] font-bold leading-4 ${
+                  memoryLeakSignal
+                    ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-500/10 dark:text-yellow-300"
+                    : "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300"
+                }`}
+              >
+                {memoryLeakSignal ? "! CÓ DẤU HIỆU MEMORY LEAK" : "ỔN ĐỊNH"}
               </div>
             </div>
 
             <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
-              <div className="rounded-[10px] border border-orange-200 bg-orange-50 p-[14px]">
-                <span className="mb-1.5 block text-[11px] font-bold leading-4 text-slate-500">
+              <div className="rounded-[10px] border border-orange-200 bg-orange-50 p-[14px] dark:border-orange-500/20 dark:bg-orange-500/10">
+                <span className="mb-1.5 block text-[11px] font-bold leading-4 text-slate-500 dark:text-slate-300">
                   ĐÃ DÙNG
                 </span>
                 <strong className="text-base font-extrabold leading-6 text-orange-500">
-                  12.4 GB
+                  {ramUsedText}
                 </strong>
               </div>
 
-              <div className="rounded-[10px] bg-slate-100 p-[14px]">
-                <span className="mb-1.5 block text-[11px] font-bold leading-4 text-slate-500">
+              <div className="rounded-[10px] bg-slate-100 p-[14px] dark:bg-muted">
+                <span className="mb-1.5 block text-[11px] font-bold leading-4 text-slate-500 dark:text-slate-300">
                   TRỐNG
                 </span>
-                <strong className="text-base font-extrabold leading-6 text-slate-900">
-                  3.6 GB
+                <strong className="text-base font-extrabold leading-6 text-slate-900 dark:text-foreground">
+                  {ramFreeText}
                 </strong>
               </div>
 
-              <div className="rounded-[10px] bg-slate-100 p-[14px]">
-                <span className="mb-1.5 block text-[11px] font-bold leading-4 text-slate-500">
+              <div className="rounded-[10px] bg-slate-100 p-[14px] dark:bg-muted">
+                <span className="mb-1.5 block text-[11px] font-bold leading-4 text-slate-500 dark:text-slate-300">
                   SWAP
                 </span>
-                <strong className="text-base font-extrabold leading-6 text-slate-900">
-                  512 MB
+                <strong className="text-base font-extrabold leading-6 text-slate-900 dark:text-foreground">
+                  {swapText}
                 </strong>
               </div>
             </div>
           </div>
 
-          <div className="mt-1.5">
+          <div className="mt-1.5 h-[320px] min-w-0">
             <RamUsageChart data={ramData} />
           </div>
         </section>
@@ -167,51 +228,53 @@ export default function SystemHealthPage() {
             <h3 className="m-0 text-lg font-bold leading-7 text-card-foreground">
               Băng thông &amp; Thông lượng
             </h3>
-            <p className="m-0 text-xs font-normal leading-4 text-slate-500">
+            <p className="m-0 text-xs font-normal leading-4 text-slate-500 dark:text-slate-300">
               Tốc độ truyền tải và chất lượng kết nối mạng
             </p>
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <div>
-              <span className="mb-1.5 block whitespace-nowrap text-[11px] font-bold leading-4 text-slate-500">
+              <span className="mb-1.5 block whitespace-nowrap text-[11px] font-bold leading-4 text-slate-500 dark:text-slate-300">
                 ĐỘ TRỄ (LATENCY)
               </span>
               <strong className="text-base font-extrabold leading-6 text-green-500">
-                24ms
+                {latencyText}
               </strong>
             </div>
 
             <div>
-              <span className="mb-1.5 block whitespace-nowrap text-[11px] font-bold leading-4 text-slate-500">
+              <span className="mb-1.5 block whitespace-nowrap text-[11px] font-bold leading-4 text-slate-500 dark:text-slate-300">
                 MẤT GÓI (LOSS)
               </span>
               <strong className="text-base font-extrabold leading-6 text-card-foreground">
-                0.02%
+                {packetLossText}
               </strong>
             </div>
 
             <div>
-              <span className="mb-1.5 block whitespace-nowrap text-[11px] font-bold leading-4 text-slate-500">
+              <span className="mb-1.5 block whitespace-nowrap text-[11px] font-bold leading-4 text-slate-500 dark:text-slate-300">
                 LƯU LƯỢNG INBOUND
               </span>
               <strong className="text-base font-extrabold leading-6 text-orange-500">
-                850 Mbps
+                {inboundText}
               </strong>
             </div>
 
             <div>
-              <span className="mb-1.5 block whitespace-nowrap text-[11px] font-bold leading-4 text-slate-500">
+              <span className="mb-1.5 block whitespace-nowrap text-[11px] font-bold leading-4 text-slate-500 dark:text-slate-300">
                 LƯU LƯỢNG OUTBOUND
               </span>
               <strong className="text-base font-extrabold leading-6 text-card-foreground">
-                1.2 Gbps
+                {outboundText}
               </strong>
             </div>
           </div>
         </div>
 
-        <BandwidthChart data={bandwidthData} />
+        <div className="h-[320px] min-w-0">
+          <BandwidthChart data={bandwidthData} />
+        </div>
       </section>
     </div>
   );

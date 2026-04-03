@@ -45,7 +45,7 @@ export default function PartnerStats({ items }: PartnerStatsProps) {
           >
             <CardContent className="p-5">
               <div className="mb-5 flex items-start justify-between">
-                <p className="text-sm font-medium text-muted-foreground">
+                <p className="text-[15px] font-medium text-muted-foreground">
                   {item.title}
                 </p>
 
@@ -54,7 +54,7 @@ export default function PartnerStats({ items }: PartnerStatsProps) {
                     item.iconWrapClass ?? "bg-sky-500/10 text-sky-500"
                   }`}
                 >
-                  <Icon className="h-4 w-4" />
+                  <Icon className="text-[25px]" />
                 </div>
               </div>
 

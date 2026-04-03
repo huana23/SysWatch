@@ -4,27 +4,6 @@ import type {
   DashboardModuleMetrics,
 } from "@/types/overview";
 
-import type { DashboardOverviewStats } from "@/types/overview";
-
-export const dashboardOverviewStats: DashboardOverviewStats = {
-  users: {
-    value: "1,245,890",
-    change: "+12%",
-  },
-  orders: {
-    value: "45,120",
-    change: "+8%",
-  },
-  partners: {
-    value: "1,542",
-    change: "0%",
-  },
-  revenue: {
-    value: "$125,430",
-    change: "+5%",
-  },
-};
-
 export const dashboardAlerts: DashboardAlertItem[] = [
   {
     message: "Sử dụng CPU cao trên Node-1 (vượt quá 95%)",
@@ -48,19 +27,19 @@ export const dashboardActivities: DashboardActivityItem[] = [
     title: "Đã thêm người dùng quản trị mới",
     description: "Sarah Jenkins đã được hệ thống cấp quyền quản trị.",
     time: "12:45 PM",
-    isActive: true
+    isActive: true,
   },
   {
     title: "Hoàn tất sao lưu hệ thống",
     description: "Bản sao lưu hàng đêm của DB sản xuất US-East-1 thành công.",
     time: "10:00 AM",
-  isActive: false
+    isActive: false,
   },
   {
     title: "Khóa API đã được thay đổi",
     description: "Khóa API nền tảng tiếp thị đã được tự động làm mới.",
     time: "Hôm qua",
-     isActive: false
+    isActive: false,
   },
 ];
 

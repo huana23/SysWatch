@@ -10,6 +10,7 @@ import {
 } from "recharts";
 
 import ChartTooltip from "@/components/health/chart-tooltip";
+import {BandwidthPoint} from "@/types/monitoring";
 
 type BandwidthDataPoint = {
   name: string;
@@ -17,7 +18,7 @@ type BandwidthDataPoint = {
 };
 
 type BandwidthChartProps = {
-  data: BandwidthDataPoint[];
+  data: BandwidthPoint[];
 };
 
 export default function BandwidthChart({ data }: BandwidthChartProps) {

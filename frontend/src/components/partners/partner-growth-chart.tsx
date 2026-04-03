@@ -1,6 +1,5 @@
 "use client";
 
-import { ChevronDown } from "lucide-react";
 import {
   Area,
   AreaChart,
@@ -13,34 +12,51 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { GrowthPoint } from "@/types/partners";
 
+type RangeOption = {
+  label: string;
+  value: string;
+};
+
 type PartnerGrowthChartProps = {
   title: string;
-  filterLabel: string;
   data: GrowthPoint[];
+  selectedRange: string;
+  rangeOptions: RangeOption[];
+  onRangeChange: (value: string) => void;
 };
 
 export default function PartnerGrowthChart({
   title,
-  filterLabel,
   data,
+  selectedRange,
+  rangeOptions,
+  onRangeChange,
 }: PartnerGrowthChartProps) {
   return (
     <Card className="min-w-0 rounded-2xl border border-border bg-card shadow-sm">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b px-5 py-4">
         <CardTitle className="text-xl font-bold">{title}</CardTitle>
 
-        <button className="inline-flex items-center gap-1 rounded-xl bg-muted px-3 py-1.5 text-xs font-medium text-muted-foreground">
-          {filterLabel}
-          <ChevronDown className="h-3.5 w-3.5" />
-        </button>
+        <select
+          value={selectedRange}
+          onChange={(event) => onRangeChange(event.target.value)}
+          className="h-7 rounded-full border border-border bg-muted px-4 text-sm font-medium text-muted-foreground outline-none transition-colors hover:bg-accent focus:ring-2 focus:ring-ring"
+          aria-label="Chọn khoảng thời gian tăng trưởng"
+        >
+          {rangeOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
       </CardHeader>
 
       <CardContent className="p-5">
-        <div className="h-[320px] w-full min-w-0 overflow-hidden rounded-xl">
+        <div className="h-[320px] w-full min-w-0 rounded-xl">
           <ResponsiveContainer width="100%" height="100%" debounce={140}>
             <AreaChart
               data={data}
-              margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
+              margin={{ top: 8, right: 12, left: 12, bottom: 8 }}
             >
               <defs>
                 <linearGradient id="partnerGrowthFill" x1="0" y1="0" x2="0" y2="1">
@@ -54,8 +70,11 @@ export default function PartnerGrowthChart({
                 dataKey="month"
                 axisLine={false}
                 tickLine={false}
+                interval={0}
+                minTickGap={0}
+                tickMargin={12}
+                padding={{ left: 12, right: 12 }}
                 tick={{ fontSize: 11, fill: "#94A3B8", fontWeight: 600 }}
-                padding={{ left: 0, right: 0 }}
               />
               <YAxis hide />
               <Tooltip cursor={false} />

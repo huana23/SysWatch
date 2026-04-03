@@ -1,9 +1,3 @@
-
-export type DashboardStatMetric = {
-  value: string;
-  change: string;
-};
-
 export type DashboardAlertType = "danger" | "warning" | "info";
 
 export type DashboardAlertItem = {
@@ -22,13 +16,6 @@ export type DashboardActivityItem = {
 export type DashboardModuleMetric = {
   value: number;
   status: string;
-};
-
-export type DashboardOverviewStats = {
-  users: DashboardStatMetric;
-  orders: DashboardStatMetric;
-  partners: DashboardStatMetric;
-  revenue: DashboardStatMetric;
 };
 
 export type DashboardModuleMetrics = {

@@ -47,7 +47,7 @@ export default function Stats({ items }: StatsProps) {
           >
             <CardContent className="p-5">
               <div className="mb-5 flex items-start justify-between">
-                <p className="text-sm font-medium text-muted-foreground">
+                <p className="text-[15px] font-medium text-muted-foreground">
                   {item.title}
                 </p>
 

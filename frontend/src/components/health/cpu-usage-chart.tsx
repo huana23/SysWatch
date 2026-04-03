@@ -11,10 +11,10 @@ import {
 } from "recharts";
 
 import ChartTooltip from "@/components/health/chart-tooltip";
-import { CpuDataPoint } from "@/types/health";
+import {CpuPoint} from "@/types/monitoring";
 
 type CpuUsageChartProps = {
-  data: CpuDataPoint[];
+  data: CpuPoint[];
 };
 
 const CHART_X_AXIS_HEIGHT = 30;

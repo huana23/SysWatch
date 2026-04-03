@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Activity,
   Clock3,
@@ -14,30 +16,42 @@ import {
   dashboardActivities,
   dashboardAlerts,
   dashboardModuleMetrics,
-  dashboardOverviewStats,
 } from "@/data/overview";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-
-import DashboardFilters from "@/components/overview/dashboard-filters";
-import StatCardItem from "@/components/overview/stat-card-item";
 import AlertCardItem from "@/components/overview/alert-card-item";
 import ActivityTimelineItem from "@/components/overview/activity-timeline-item";
+import DashboardFilters from "@/components/overview/dashboard-filters";
 import ModuleCardItem from "@/components/overview/module-card-item";
+import StatCardItem from "@/components/overview/stat-card-item";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useDashboardStats } from "@/hooks/use-dashboard-stats";
 import { getChangeMeta } from "@/lib/change-trend";
 
 const visibleActivities = dashboardActivities.slice(0, 4);
 
+function DashboardStatSkeleton() {
+  return (
+    <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+      <div className="flex items-start justify-between gap-4">
+        <div className="min-w-0 flex-1">
+          <div className="h-4 w-32 animate-pulse rounded bg-muted" />
+          <div className="mt-4 h-8 w-24 animate-pulse rounded bg-muted" />
+          <div className="mt-4 h-4 w-20 animate-pulse rounded bg-muted" />
+        </div>
+
+        <div className="h-12 w-12 animate-pulse rounded-xl bg-muted" />
+      </div>
+    </div>
+  );
+}
+
 export default function DashboardPage() {
-  const usersChange = getChangeMeta(dashboardOverviewStats.users.change);
-  const ordersChange = getChangeMeta(dashboardOverviewStats.orders.change);
-  const partnersChange = getChangeMeta(dashboardOverviewStats.partners.change);
-  const revenueChange = getChangeMeta(dashboardOverviewStats.revenue.change);
+  const { isReady, stats, syncedLabel } = useDashboardStats();
+
+  const usersChange = getChangeMeta(stats.users.change);
+  const ordersChange = getChangeMeta(stats.orders.change);
+  const partnersChange = getChangeMeta(stats.partners.change);
+  const revenueChange = getChangeMeta(stats.revenue.change);
 
   return (
     <div className="flex w-full flex-col gap-6">
@@ -46,41 +60,52 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <StatCardItem
-          title="Tổng số người dùng"
-          value={dashboardOverviewStats.users.value}
-          change={usersChange.displayChange}
-          changeType={usersChange.changeType}
-          icon={<Users className="h-6 w-6" />}
-          iconWrapClass="bg-blue-500/10 text-blue-500"
-        />
+        {isReady ? (
+          <>
+            <StatCardItem
+              title="Tổng số người dùng"
+              value={stats.users.value}
+              change={usersChange.displayChange}
+              changeType={usersChange.changeType}
+              icon={<Users className="h-6 w-6" />}
+              iconWrapClass="bg-blue-500/10 text-blue-500"
+            />
 
-        <StatCardItem
-          title="Tổng số đơn đặt hàng"
-          value={dashboardOverviewStats.orders.value}
-          change={ordersChange.displayChange}
-          changeType={ordersChange.changeType}
-          icon={<ShoppingCart className="h-6 w-6" />}
-          iconWrapClass="bg-violet-500/10 text-violet-500"
-        />
+            <StatCardItem
+              title="Tổng số đơn đặt hàng"
+              value={stats.orders.value}
+              change={ordersChange.displayChange}
+              changeType={ordersChange.changeType}
+              icon={<ShoppingCart className="h-6 w-6" />}
+              iconWrapClass="bg-violet-500/10 text-violet-500"
+            />
 
-        <StatCardItem
-          title="Tổng số đối tác"
-          value={dashboardOverviewStats.partners.value}
-          change={partnersChange.displayChange}
-          changeType={partnersChange.changeType}
-          icon={<Handshake className="h-6 w-6" />}
-          iconWrapClass="bg-amber-500/10 text-amber-500"
-        />
+            <StatCardItem
+              title="Tổng số đối tác"
+              value={stats.partners.value}
+              change={partnersChange.displayChange}
+              changeType={partnersChange.changeType}
+              icon={<Handshake className="h-6 w-6" />}
+              iconWrapClass="bg-amber-500/10 text-amber-500"
+            />
 
-        <StatCardItem
-          title="Doanh thu hôm nay"
-          value={dashboardOverviewStats.revenue.value}
-          change={revenueChange.displayChange}
-          changeType={revenueChange.changeType}
-          icon={<Wallet className="h-6 w-6" />}
-          iconWrapClass="bg-emerald-500/10 text-emerald-500"
-        />
+            <StatCardItem
+              title="Doanh thu hôm nay"
+              value={stats.revenue.value}
+              change={revenueChange.displayChange}
+              changeType={revenueChange.changeType}
+              icon={<Wallet className="h-6 w-6" />}
+              iconWrapClass="bg-emerald-500/10 text-emerald-500"
+            />
+          </>
+        ) : (
+          <>
+            <DashboardStatSkeleton />
+            <DashboardStatSkeleton />
+            <DashboardStatSkeleton />
+            <DashboardStatSkeleton />
+          </>
+        )}
       </div>
 
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
@@ -137,7 +162,7 @@ export default function DashboardPage() {
 
           <div className="inline-flex items-center gap-2 text-sm text-muted-foreground">
             <Clock3 className="h-4 w-4" />
-            Đồng bộ: 1 phút trước
+            Đồng bộ: {isReady ? syncedLabel : "Đang tải dữ liệu..."}
           </div>
         </CardHeader>
 
